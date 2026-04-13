@@ -1,12 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Status = "Pending" | "In Progress" | "Done";
 // type Priority = "Low" | "Medium" | "High";
 const Priority = ["Low", "Medium", "High"];
 
+const DUE_DATE = new Date("2026-04-16T18:00:00Z");
+
+function getTimeRemainingText(dueDate: Date) {
+  const now = new Date();
+  const diff = dueDate.getTime() - now.getTime();
+
+  const absDiff = Math.abs(diff);
+
+  const minutes = Math.floor(absDiff / (1000 * 60));
+  const hours = Math.floor(absDiff / (1000 * 60 * 60));
+  const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
+
+  if (Math.abs(diff) < 60000) return "Due now!";
+
+  if (diff > 0) {
+    if (days > 0) return days === 1 ? "Due tomorrow" : `Due in ${days} days`;
+    if (hours > 0) return `Due in ${hours} hours`;
+    return `Due in ${minutes} minutes`;
+  } else {
+    if (days > 0) return `Overdue by ${days} days`;
+    if (hours > 0) return `Overdue by ${hours} hours`;
+    return `Overdue by ${minutes} minutes`;
+  }
+}
+
 export default function TodoCard() {
   const [completed, setCompleted] = useState(false);
   const [status, setStatus] = useState<Status>("Pending");
+  const [timeRemaining, setTimeRemaining] = useState(
+    getTimeRemainingText(DUE_DATE),
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeRemaining(getTimeRemainingText(DUE_DATE));
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleToggle = () => {
     const newValue = !completed;
@@ -73,6 +109,25 @@ export default function TodoCard() {
         </span>
       </div>
 
+      {/* Dates */}
+      <div className="flex flex-col text-sm text-gray-700 gap-1">
+        <time
+          data-testid="test-todo-due-date"
+          dateTime={DUE_DATE.toISOString()}
+        >
+          Due{" "}
+          {DUE_DATE.toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </time>
+
+        <time data-testid="test-todo-time-remaining" aria-live="polite">
+          {timeRemaining}
+        </time>
+      </div>
+
       {/* Status */}
       <span
         data-testid="test-todo-status"
@@ -109,7 +164,7 @@ export default function TodoCard() {
           <button
             data-testid="test-todo-delete-button"
             onClick={() => alert("Delete clicked")}
-            className="text-sm px-3 py-1 rounded-lg border text-red-600 hover:bg-red-50 focus:outline focus:outline-2"
+            className="text-sm px-3 py-1 rounded-lg border text-red-600 hover:bg-red-50 focus:outline-2"
           >
             Delete
           </button>
