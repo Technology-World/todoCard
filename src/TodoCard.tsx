@@ -454,7 +454,9 @@ export default function TodoCard() {
                 ref={editButtonRef}
                 data-testid="test-todo-edit-button"
                 onClick={openEdit}
-                className="text-sm px-3 py-1.5 rounded-lg border hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
+                disabled={isDone}
+                className={`text-sm px-3 py-1.5 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300
+    ${isDone ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-50"}`}
               >
                 Edit
               </button>
