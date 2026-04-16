@@ -7,7 +7,7 @@ const PRIORITIES: Priority[] = ["Low", "Medium", "High"];
 const STATUSES: Status[] = ["Pending", "In Progress", "Done"];
 const DESCRIPTION_COLLAPSE_LENGTH = 100;
 
-const INITIAL_DUE_DATE = new Date("2026-04-17T23:59:00Z");
+const INITIAL_DUE_DATE = new Date("2026-04-17T23::00Z");
 
 function getTimeRemainingText(dueDate: Date, isDone: boolean): string {
   if (isDone) return "Completed";
@@ -37,10 +37,7 @@ function isOverdue(dueDate: Date, isDone: boolean): boolean {
   return !isDone && dueDate.getTime() < Date.now();
 }
 
-const priorityConfig: Record<
-  Priority,
-  { label: string; dot: string; badge: string; border: string }
-> = {
+const priorityConfig: Record<Priority, { label: string; dot: string; badge: string; border: string }> = {
   Low: {
     label: "Low",
     dot: "bg-emerald-400",
@@ -71,7 +68,7 @@ export default function TodoCard() {
   // Core state
   const [title, setTitle] = useState("Build Todo Card UI");
   const [description, setDescription] = useState(
-    "Create a single page, responsive and accessible todo card component with proper test IDs and time tracking.",
+    "Create a single page, responsive and accessible todo card component with proper test IDs and time tracking."
   );
   const [priority, setPriority] = useState<Priority>("High");
   const [status, setStatus] = useState<Status>("Pending");
@@ -81,13 +78,15 @@ export default function TodoCard() {
   // UI state
   const [isEditing, setIsEditing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+const [tick, setTick] = useState(0);
+
 
   // Edit form draft state
   const [draftTitle, setDraftTitle] = useState(title);
   const [draftDescription, setDraftDescription] = useState(description);
   const [draftPriority, setDraftPriority] = useState<Priority>(priority);
   const [draftDueDate, setDraftDueDate] = useState(
-    INITIAL_DUE_DATE.toISOString().slice(0, 16),
+    INITIAL_DUE_DATE.toISOString().slice(0, 16)
   );
 
   const editButtonRef = useRef<HTMLButtonElement>(null);
@@ -102,9 +101,7 @@ export default function TodoCard() {
   // Timer effect — stops when Done
   useEffect(() => {
     if (isDone) return;
-    const interval = setInterval(() => {
-      // Trigger re-render to update timeRemaining
-    }, 30000);
+    const interval = setInterval(() => setTick((t) => t + 1), 30000);
     return () => clearInterval(interval);
   }, [isDone]);
 
@@ -172,6 +169,7 @@ export default function TodoCard() {
       />
 
       <div className="px-4 pb-4 flex flex-col gap-3">
+
         {/* Overdue indicator */}
         {overdue && (
           <div
@@ -194,10 +192,7 @@ export default function TodoCard() {
             aria-label="Edit task"
           >
             <div className="flex flex-col gap-1">
-              <label
-                htmlFor="edit-title"
-                className="text-xs font-medium text-gray-600"
-              >
+              <label htmlFor="edit-title" className="text-xs font-medium text-gray-600">
                 Title
               </label>
               <input
@@ -212,10 +207,7 @@ export default function TodoCard() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label
-                htmlFor="edit-description"
-                className="text-xs font-medium text-gray-600"
-              >
+              <label htmlFor="edit-description" className="text-xs font-medium text-gray-600">
                 Description
               </label>
               <textarea
@@ -230,10 +222,7 @@ export default function TodoCard() {
 
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex flex-col gap-1 flex-1">
-                <label
-                  htmlFor="edit-priority"
-                  className="text-xs font-medium text-gray-600"
-                >
+                <label htmlFor="edit-priority" className="text-xs font-medium text-gray-600">
                   Priority
                 </label>
                 <select
@@ -244,18 +233,13 @@ export default function TodoCard() {
                   className="text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full bg-white"
                 >
                   {PRIORITIES.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
+                    <option key={p} value={p}>{p}</option>
                   ))}
                 </select>
               </div>
 
               <div className="flex flex-col gap-1 flex-1">
-                <label
-                  htmlFor="edit-due-date"
-                  className="text-xs font-medium text-gray-600"
-                >
+                <label htmlFor="edit-due-date" className="text-xs font-medium text-gray-600">
                   Due date
                 </label>
                 <input
@@ -310,10 +294,7 @@ export default function TodoCard() {
             </div>
 
             {/* Description + expand/collapse */}
-            <div
-              data-testid="test-todo-collapsible-section"
-              id="todo-collapsible"
-            >
+            <div data-testid="test-todo-collapsible-section" id="todo-collapsible">
               <p
                 data-testid="test-todo-description"
                 className={`text-sm transition-colors ${isDone ? "text-gray-400" : "text-gray-600"}`}
@@ -340,26 +321,9 @@ export default function TodoCard() {
               role="list"
               className="flex flex-wrap gap-2"
             >
-              <span
-                role="listitem"
-                data-testid="test-todo-tag-work"
-                className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full"
-              >
-                work
-              </span>
-              <span
-                role="listitem"
-                data-testid="test-todo-tag-urgent"
-                className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full"
-              >
-                urgent
-              </span>
-              <span
-                role="listitem"
-                className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full"
-              >
-                design
-              </span>
+              <span role="listitem" data-testid="test-todo-tag-work" className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">work</span>
+              <span role="listitem" data-testid="test-todo-tag-urgent" className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">urgent</span>
+              <span role="listitem" className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">design</span>
             </div>
 
             {/* Dates */}
@@ -367,9 +331,7 @@ export default function TodoCard() {
               <time
                 data-testid="test-todo-due-date"
                 dateTime={dueDate.toISOString()}
-                className={
-                  overdue ? "text-red-500 font-medium" : "text-gray-600"
-                }
+                className={overdue ? "text-red-500 font-medium" : "text-gray-600"}
               >
                 Due{" "}
                 {dueDate.toLocaleDateString(undefined, {
@@ -386,8 +348,8 @@ export default function TodoCard() {
                   isDone
                     ? "text-emerald-600"
                     : overdue
-                      ? "text-red-500"
-                      : "text-gray-500"
+                    ? "text-red-500"
+                    : "text-gray-500"
                 }`}
               >
                 {timeRemaining}
@@ -418,11 +380,7 @@ export default function TodoCard() {
                   onChange={handleToggle}
                   className="w-4 h-4 accent-blue-600"
                 />
-                <span
-                  className={
-                    isDone ? "text-gray-400 line-through" : "text-gray-700"
-                  }
-                >
+                <span className={isDone ? "text-gray-400 line-through" : "text-gray-700"}>
                   Mark as complete
                 </span>
               </label>
@@ -440,9 +398,7 @@ export default function TodoCard() {
                   className={`text-xs border rounded-lg px-2 py-1 font-medium focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white cursor-pointer ${sConfig.color}`}
                 >
                   {STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
+                    <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
               </div>
